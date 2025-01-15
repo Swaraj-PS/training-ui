@@ -16,7 +16,6 @@
 import axios from 'axios';
 import NavBar from '@/components/NavBar.vue';
 import BlogCard from '@/components/BlogCard.vue';
-// import { param } from 'jquery';
 
 export default {
   name: 'HomeView',
@@ -43,13 +42,15 @@ export default {
   },
   methods: {
     async fetchBlog(searchParams = {}) {
-      let url = `https://intern2.uptrain.co/api/v1/blog/`
+      let url = `https://intern2.uptrain.co/api/v1/blog/`;
       const response = await axios.get(url, { params: searchParams });
       if (response.data.code === "BLOG_DOES_NOT_EXIST") {
         this.isEmpty = true;
       } else {
         this.blogList = response.data.data.blogList;
         this.isEmpty = false;
+        console.log(this.blogList);
+        
 
       }
     }

@@ -1,6 +1,5 @@
-<template>
+<!-- <template>
   <nav class="navbar navbar-light bg-light" style="width: 100%;height: 100%;">
-
     <div class="navbar-brand" href="#"><i
         style="color: dodgerblue;font-size: xx-large;font-family:cinzel-decorative, sans-serif;">BLOG</i></div>
     <ul class="nav justify-content-center">
@@ -27,8 +26,44 @@
       </div>
     </div>
   </nav>
-</template>
+</template> -->
 
+<template>
+  <div class="container-fluid">
+    <div class="row flex-column ">
+      <nav class="navbar navbar-dark bg-primary">
+        <div class="col-4">
+          <div class="navbar-brand"><i
+              style="color: white;font-size: xx-large;font-family:cinzel-decorative, sans-serif;">BLOG</i></div>
+        </div>
+        <div class="col-2">
+          <ul class="nav">
+            <li v-if="!isHome" class="nav-item active">
+              <RouterLink class="nav-link text-light"  :to="{ name: 'home' }">Home</RouterLink>
+            </li>
+            <li v-if="!isMyBlogs" class="nav-item active">
+              <RouterLink class="nav-link text-light" :to="`/${userId}/my-blogs`">My Blogs</RouterLink>
+            </li>
+          </ul>
+        </div>
+        <div class="col-auto ">
+          <SearchBlog></SearchBlog>
+        </div>
+        <div class="col-1">
+        <a class="btn btn-secondary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown"
+          aria-haspopup="true" aria-expanded="false">
+          {{ username }}
+        </a>
+        <div class="dropdown-menu " aria-labelledby="dropdownMenuLink">
+          <RouterLink class="dropdown-item" :to="`/${userId}/change-password`"> Change Password</RouterLink>
+          <RouterLink class="dropdown-item" to="/"><span @click="DeleteAccount"> Delete Account </span></RouterLink>
+          <RouterLink class="dropdown-item" to="/"><span @click="Logout"> Logout </span></RouterLink>
+        </div>
+    </div>
+    </nav>
+  </div>
+  </div>
+</template>
 
 
 
@@ -58,6 +93,7 @@ export default {
   methods: {
     Logout() {
       Store.commit('logout');
+      localStorage.clear();
 
     },
     DeleteAccount() {

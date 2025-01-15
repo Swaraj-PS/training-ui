@@ -7,6 +7,8 @@ import RegisterView from "@/views/RegisterView.vue";
 import MyBlogsView from '@/views/MyBlogsView.vue';
 import AddBlogView from '@/views/AddBlogView.vue'
 import Store from "@/store/store";
+import EditBlogView from "@/views/EditBlogView.vue";
+import SelectedBlogVIew from "@/views/SelectedBlogVIew.vue";
 Vue.use(VueRouter);
 
 // const user_id=localStorage.getItem('id');
@@ -18,8 +20,10 @@ const routes = [
   { path: `/:username/change-password`, name: "ChangePass", component: ChangePassView },
   { path: "/register", name: "register", component: RegisterView },
   { path: "/:userId/add-new-blog", name: "add-new-blogs", component: AddBlogView},
-  { path: `/:userId/my-blogs/`, name: "my-blogs", component: MyBlogsView}
-  // { path: `/my-blogs/`, name: "my-blogs", component: MyBlogsView}
+  { path: `/:userId/my-blogs/`, name: "my-blogs", component: MyBlogsView},
+  { path: `/:userId/:blogId/edit-blog`, name: "edit-blogs", component: EditBlogView},
+  { path: `/:userId/:blogId`, name: "view-my-selected-blog", component: SelectedBlogVIew}
+
   
 ];
 const router = new VueRouter({
