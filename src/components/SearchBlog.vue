@@ -1,5 +1,5 @@
 <template>
-  <form @submit.prevent="handleSearch" class="form-inline my-2 my-lg-0">
+  <form id="SearchForm" @submit.prevent="handleSearch" class="form-inline my-2 my-lg-0">
     <select class="btn btn-primary " name="searchUsing" id="searchUsing" v-model="selected">
       <option value="title">Title</option>
       <option v-if="isHome" value="username">Author</option>

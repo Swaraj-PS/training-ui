@@ -38,11 +38,11 @@
         </div>
         <div class="col-2">
           <ul class="nav">
-            <li v-if="!isHome" class="nav-item active">
+            <li  v-if="!isHome" class="nav-item active">
               <RouterLink class="nav-link text-light"  :to="{ name: 'home' }">Home</RouterLink>
             </li>
-            <li v-if="!isMyBlogs" class="nav-item active">
-              <RouterLink class="nav-link text-light" :to="`/${userId}/my-blogs`">My Blogs</RouterLink>
+            <li  v-if="!isMyBlogs" class="nav-item active">
+              <RouterLink  class="nav-link text-light" :to="`/${userId}/my-blogs`">My Blogs</RouterLink>
             </li>
           </ul>
         </div>
@@ -72,7 +72,6 @@
 <script>
 import router from '@/routes';
 import SearchBlog from './SearchBlog.vue';
-import Store from '@/store/store';
 import axios from 'axios';
 export default {
   name: 'NavBar',
@@ -83,16 +82,17 @@ export default {
     return {
       isMyBlogs: (this.$router.currentRoute.name == 'my-blogs'),
       isHome: (this.$router.currentRoute.name == 'home'),
-      username: Store.getters.getUserData.username,
-      userId: Store.getters.getUserData.id,
+      username: this.$store.getters.getUserData.username,
+      userId: this.$store.getters.getUserData.id,
       selected: 'title',
       SearchQuery: ' '
     }
   },
 
   methods: {
+  
     Logout() {
-      Store.commit('logout');
+      this.$store.commit('logout');
       localStorage.clear();
 
     },

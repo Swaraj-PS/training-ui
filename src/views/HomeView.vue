@@ -3,7 +3,7 @@
     <NavBar></NavBar>
     <div v-if="isEmpty">No blogs Found</div>
     <div v-else>
-      <div v-for="blog in blogList" v-bind:key="blog.index">
+      <div v-for="blog in blogList" v-bind:key="blog.id">
         <BlogCard :blog="blog"></BlogCard>
       </div>
     </div>
@@ -42,6 +42,8 @@ export default {
   },
   methods: {
     async fetchBlog(searchParams = {}) {
+      console.log('DB hit!!!!');
+      
       let url = `https://intern2.uptrain.co/api/v1/blog/`;
       const response = await axios.get(url, { params: searchParams });
       if (response.data.code === "BLOG_DOES_NOT_EXIST") {
@@ -49,6 +51,7 @@ export default {
       } else {
         this.blogList = response.data.data.blogList;
         this.isEmpty = false;
+        this.$store.dispatch('initBlogList',this.blogList)
         console.log(this.blogList);
         
 

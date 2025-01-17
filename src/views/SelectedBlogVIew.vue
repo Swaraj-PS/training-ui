@@ -2,15 +2,14 @@
     <div>
         <NavBar></NavBar>
         <SelectedBlog :blog="blog"></SelectedBlog>
-        <CommentSection :blogId="blog.id"></CommentSection>
-        <div v-if="username===this.blog.username">
+        <CommentSection  :commentList="blog.comments"></CommentSection>
+        <div v-if="username === this.blog.username">
             <button class="btn btn-light">
-                <RouterLink :to="{ path: `${this.blog.id}/edit-blog`}">Edit</RouterLink>
+                <RouterLink :to="{ path: `${this.blog.id}/edit-blog` }">Edit</RouterLink>
             </button>
             <button @click="handleDelete" class="btn btn-danger">Delete</button>
         </div>
     </div>
-
 </template>
 
 <script>
@@ -26,12 +25,23 @@ export default {
     data() {
         return {
             username: this.$store.getters.getUserData.username,
-            blog: this.$store.getters.getSelectedBlog(this.$route.params.blogId),
         }
     },
-    created() {       
-         console.log('blooooog',this.blog);         
-         
+    mounted() {
+        if (this.blog.id === 'temp') {
+            this.getSelectedBlog()
+        }
+    },
+    computed: {
+        blog() {
+            const blog = this.$store.getters.getSelectedBlog(this.$route.params.blogId);
+            if (blog) {
+                console.log(blog.comments);
+
+                return blog;
+            } else
+                return { id: 'temp', comments: [] }; 
+        },
     },
     components: {
         SelectedBlog,
@@ -39,12 +49,32 @@ export default {
         NavBar
     },
     methods: {
+        //in case of refresh entire
+        async getSelectedBlog() {
+            console.log('this', this.$route.params.blogId);
+
+            // const response = await axios.get(`https://intern2.uptrain.co/api/v1/blog/`, { params: { id: this.$route.params.blogId } })
+            const response = await axios.get(`https://intern2.uptrain.co/api/v1/blog/`);
+
+            console.log('hitt', response.data.data.blogList);
+            this.$store.dispatch('initBlogList', response.data.data.blogList)
+        },
+        // async UpdateCommentList(data) {
+        //     console.log(data);
+        //     if (data.status == 'error') alert(data.message)
+        //     else {
+        //         this.commentList = data.data
+        //         console.log(this.commentList);
+
+
+        //     }
+        // },
         async handleDelete() {
             await axios.delete('https://intern2.uptrain.co/api/v1/blog/' + this.blog.id)
                 .then(() => {
                     alert("Blog deleted Successully");
-                    this.$router.go(-2);
-                    this.$store.dispatch('deleteBlog',this.blog.id)
+                    this.$router.go(-1);
+                    this.$store.dispatch('deleteBlog', this.blog.id)
                 }).catch(() => {
                     alert("Something went Wrong")
                 });

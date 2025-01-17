@@ -1,17 +1,16 @@
 <template>
   <div>
     <NavBar @search="fetchBlog"></NavBar>
-
-    <button type="button" class="btn btn-light btn-lg btn-block">
-      <RouterLink :to="`/${this.userId}/add-new-blog`">Add new Blog</RouterLink>
-    </button>
-    <div v-if="isEmpty">No blogs Found</div>
+    <div v-if="loading"> Loading </div>
     <div v-else>
-      <!-- <div v-for="(blog,index) in blogList" v-bind:key="blog.index"> -->
-      <!-- <BlogCard   :blog="{index,blog}"></BlogCard> -->
-      <!-- </div> -->
-      <div v-for="blog in blogList" v-bind:key="blog.index">
-        <BlogCard :blog="blog"></BlogCard>
+      <button type="button" class="btn btn-light btn-lg btn-block">
+        <RouterLink :to="`/${this.userId}/add-new-blog`">Add new Blog</RouterLink>
+      </button>
+      <div v-if="isEmpty">No blogs Found</div>
+      <div v-else>
+        <div v-for="blog in blogList" v-bind:key="blog.id">
+          <BlogCard :blog="blog"></BlogCard>
+        </div>
       </div>
     </div>
   </div>
@@ -26,9 +25,9 @@ export default {
   name: 'MyBlogsView',
   data() {
     return {
-      blogList: this.$store.getters.getBlogList,
       isEmpty: false,
-      userId: this.$route.params.userId
+      userId: this.$route.params.userId,
+      loading:true
 
     }
   },
@@ -37,14 +36,31 @@ export default {
     NavBar,
     BlogCard
   },
-  created() {
-  if (this.blogList.length==0) {
-      this.fetchBlog();
+  mounted() {
+    console.log('eeg', this.blogList.length === 0);
+
+    if (this.blogList.length === 0) {
+      this.isEmpty = true
+      this.fetchBlog()
+      console.log('yyyyyyy', this.blogList);
+    }else{
+      this.loading=false;
     }
   },
-  mounted() {
-    console.log(this.blogList);
-    
+  computed: {
+    blogList() {
+      const blogList = this.$store.getters.getBlogList;
+      console.log('computed', blogList);
+      return blogList || [{ id: 'test', comment: [] }];
+    }
+  },
+  watch: {
+    blogList(newBlogList, oldBlogList) {
+      console.log('Blog list changed:');
+      console.log('Old blog list:', oldBlogList);
+      console.log('New blog list:', newBlogList);
+      this.loading=false;
+    }
   },
   methods: {
     async fetchBlog(searchParams = {}) {
@@ -55,9 +71,10 @@ export default {
       if (response.data.code === "BLOG_DOES_NOT_EXIST") {
         this.isEmpty = true;
       } else {
+        console.log('logging', response.data.data.blogList);
+
         this.isEmpty = false;
-        this.blogList = response.data.data.blogList;
-        this.$store.dispatch('initBlogList', this.blogList);
+        this.$store.dispatch('initBlogList', response.data.data.blogList);
 
       }
     }

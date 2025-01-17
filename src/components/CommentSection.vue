@@ -2,16 +2,16 @@
     <div
         style="height: 500px;width: 800px;background-color: beige;display: flex;justify-content:flex-start;justify-items:center; flex-direction: column;">
         <h3> Comment Section</h3>
-        <CreateCommentModal @commentAdded="getComment"></CreateCommentModal>
-        <div v-for="comment in commentList" v-bind:key="comment.index">
-            <CommentComp @deleteComment="getComment" :comment="comment"></CommentComp>
+        <CreateCommentModal ></CreateCommentModal>
+        <div v-for="comment in commentList" v-bind:key="comment.id">
+            <CommentComp    :comment="comment"></CommentComp>
 
         </div>
     </div>
 </template>
 
 <script>
-import axios from 'axios';
+// import axios from 'axios';
 import CommentComp from './CommentComp.vue';
 import CreateCommentModal from './CreateCommentModal.vue';
 
@@ -20,7 +20,7 @@ import CreateCommentModal from './CreateCommentModal.vue';
 export default {
     name: 'CommentSection',
     props: {
-        blogId:String,
+        commentList:Array,
     },
     components: {
         CommentComp,
@@ -30,27 +30,32 @@ export default {
 
     data() {
         return {
-            commentList: {},
+            // commentList: {},
             // commentCreate: {
             //     blogId: Store.getters.getSelectedBlog.id,
             //     content: '',
             //     userId: Store.getters.getUserData.id,
             //     commentId: ''
             // }
+            blogId:this.$route.params.blogId
 
         }
     },
     created() {
-        this.getComment();
+        // this.getComment();
     },
     mounted() {
         this.$root.$on('deleteComment',this.getComment);
+        // this.$root.$on('editComment',this.getComment);
+
     },
     methods: {
         async getComment() {
-            const response = await axios.get(`https://intern2.uptrain.co/api/v1/comment/${this.blogId}/comment`)
-            this.commentList = response.data.data;
-            console.log('getting cmmt');
+        //     const response = await axios.get(`https://intern2.uptrain.co/api/v1/comment/${this.blogId}/comment`)
+        //     // this.commentList = response.data.data;
+        //     console.log('getting cmmt',response);
+        //     if(response.data.status=='error')alert(response.data.message);
+        //     else this.$store.dispatch('updateCommentList',{commentList:response.data,blogId:this.blogId})
             
             // console.log(this.commentList);
             // this.commentList['blogId']=this.blogId;

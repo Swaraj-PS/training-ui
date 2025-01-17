@@ -37,7 +37,7 @@ import axios from 'axios';
 export default {
     name: 'CreateCommentModal',
 
-    data() {
+    data() { 
         return {
             commentCreate: {
                 blogId: this.$route.params.blogId,
@@ -52,10 +52,9 @@ export default {
 
         this.$root.$on('addReply',data => {
             console.log(data);            
-
             document.getElementById('modal').click();
-
             this.commentCreate.commentId=data;
+            this.createComment()
         });
     },
     created() {
@@ -71,14 +70,23 @@ export default {
     methods: {
         async createComment() {
             const response = await axios.post(`https://intern2.uptrain.co/api/v1/comment/${this.blogId}/comment`, this.commentCreate)
-            // console.log(response.data.status);
+            console.log('res 1',response.data);
             if (response.data.status == 'success') {
+                response.data.data.username=this.$store.getters.getUserData.username;                
+                if(!this.commentCreate.commentId){
+                    alert('comment added');
+                    this.$store.dispatch('addComment',{commentList:response.data.data})
+                }else{
+                    alert('reply added');
+                    // this.commentCreate.
+                    this.$store.dispatch('addReply',{commentList:response.data.data})
+                }                
                 alert('comment added');
-                this.$emit("commentAdded")
             }else{
                 alert(response.data.message)
             }
-        }
+        },
+        
     }
 };
 </script> 

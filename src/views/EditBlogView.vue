@@ -22,7 +22,6 @@
 <script>
 
 import NavBar from '@/components/NavBar.vue';
-import Store from '@/store/store';
 import axios from 'axios';
 
 export default {
@@ -32,7 +31,6 @@ export default {
             form: {
                 title: this.$store.getters.getSelectedBlog(this.$route.params.blogId).title,
                 description: this.$store.getters.getSelectedBlog(this.$route.params.blogId).description,
-                user_id: Store.getters.getUserData.id
             },
             blogParam: this.$route.params
         }
@@ -42,7 +40,7 @@ export default {
         NavBar
     },
     created() {
-        console.log(this.blogParam.blogId);
+        console.log(this.blogParam);
 
     },
     methods: {

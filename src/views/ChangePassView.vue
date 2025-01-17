@@ -10,7 +10,7 @@
       <div>
         <input v-model="form.password" type="password" id="password" placeholder="Enter new password" required />
       </div>
-      <button type="submit">Login</button> 
+      <button type="submit">Submit</button> 
     </form>
 </div>
 </template>

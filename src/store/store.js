@@ -9,8 +9,6 @@ const Store = new Vuex.Store({
     username: localStorage.getItem("username"),
     isLoggedIn: localStorage.getItem("userId") ? true : false,
     BlogList: [],
-    level: 0,
-    // selectedBlog:{},
   },
 
 
@@ -30,32 +28,45 @@ const Store = new Vuex.Store({
 
 
 
-    incrementLevel(state) {
-      state.level++;
-    },
-
-
 
     initBlogList: (state, data) => {
       state.BlogList = data;
+      console.log(state.BlogList);
+      
     },
     addNewBlog:(state,blog)=>{      
       state.BlogList.push(blog)
     },
-    editBlog:(state,blog)=>{      
-      const id = blog.blogId;
-      let index = state.BlogList.findIndex(blog => blog.id === id);
-      state.BlogList[index].title=blog.blog.title;
-      state.BlogList[index].description=blog.blog.description
+
+    editBlog:(state,blog)=>{            
+      state.BlogList[blog.index].title=blog.blog.title;
+      state.BlogList[blog.index].description=blog.blog.description
     },
-    deleteBlog:(state,id)=>{
-      const index =state.BlogList.findIndex(blog=>blog.id===id)
+ 
+    deleteBlog:(state,index)=>{
       console.log(index);
       if (index > -1) {
         state.BlogList.splice(index, 1);
       }
-      
+    
     },
+    deleteBLogList:(state)=>{
+      console.log('action');
+      state.BlogList=[]
+    },
+
+    addComment:(state,commentData)=>{            
+      state.BlogList[commentData.index].comments.push(commentData.commentList);
+    },
+
+    deleteComment:(state,indexes)=>{
+      if (indexes.commentIndex > -1) {
+        state.BlogList[indexes.blogIndex].comments.splice(indexes.commentIndex, 1);
+      }
+    },
+    editComment:(state,data)=>{
+      state.BlogList[data.indexes.blogIndex].comments[data.indexes.commentIndex].content=data.comment.content;
+    }
   },
 
 
@@ -70,31 +81,66 @@ const Store = new Vuex.Store({
 
 
 
-    incrementLevel(context) {
-      context.commit("incrementLevel");
-    },
+
     initBlogList(context,data) {
       context.commit("initBlogList",data);
+    },
+
+    deleteBLogList(context) {
+      console.log('action');
+      
+      context.commit("deleteBLogList");
     },
     addNewBlog:(context,blog)=>{   
       const date = new Date();
       let day = date.getDate();
       let month = date.getMonth() + 1;
       let year = date.getFullYear();
+      console.log(blog);
+      
       blog.username = Store.getters.getUserData.username;
       blog.creation_date = `${day}-${month}-${year}`;     
       context.commit('addNewBlog',blog);
     },
-    editBlog:(context,blog)=>{        
-      context.commit("editBlog",blog);
+    editBlog:(context,blog)=>{   
+      console.log(blog);
+      const id = blog.blogId;
+      let index = context.state.BlogList.findIndex(blog => blog.id === id);
+      console.log(index);
+      const payload={index:index,blog:blog.blog}
+      context.commit("editBlog",payload);
     },
     deleteBlog:(context,id)=>{
-      context.commit("deleteBlog",id);
+      const index =context.state.BlogList.findIndex(blog=>blog.id===id)
+      context.commit("deleteBlog",index);
       
-    }
-  },
+    },
 
+    // page refresh for now
+    addComment:(context,commentData)=>{   
+      const id = commentData.commentList.blogId;
+      let index = context.state.BlogList.findIndex(blog => blog.id === id);
+      const commentPayload={index:index,commentList:commentData.commentList}
+      context.commit("addComment",commentPayload);
+    },
 
+    deleteComment:(context,data)=>{
+      const blogIndex=context.state.BlogList.findIndex(blog=>blog.id===data.blogId);
+      const commentIndex=context.state.BlogList[blogIndex].comments.findIndex(comment=>comment.id===data.commentId);
+      const indexes = {blogIndex:blogIndex,commentIndex:commentIndex}
+      context.commit("deleteComment",indexes);
+      
+    },
+
+    editComment:(context,data)=>{      
+        const blogIndex=context.state.BlogList.findIndex(blog=>blog.id===data.ids.blogId);
+        const commentIndex=context.state.BlogList[blogIndex].comments.findIndex(comment=>comment.id===data.ids.commentId);
+        const indexes = {blogIndex:blogIndex,commentIndex:commentIndex}
+        console.log(indexes);
+        context.commit("editComment",{indexes,comment:data.comment});
+        
+      }
+    },
 
   getters: {
     isAuthenticated(state) {
@@ -107,12 +153,11 @@ const Store = new Vuex.Store({
       };
       return userData;
     },
-    // getSelectedBlog(state) {
-    //   return state.selectedBlog;
-    // },
 
     getBlogList(state) {
-       return state.BlogList;
+      console.log('bloglist gettere',state.BlogList);
+      
+       return state.BlogList||[];
     },
     getSelectedBlog: (state)=>(id)=>{
       
@@ -121,9 +166,7 @@ const Store = new Vuex.Store({
 
       return state.BlogList[index]            
     },
-    getLevel(state) {
-      return state.level;
-    },
+
   },
 });
 
